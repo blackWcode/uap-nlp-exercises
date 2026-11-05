@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UAP NLP Exercises · How NLP Tools Read UAP Reports</title>
+  <meta name="description" content="A learning project recreating openHPI Knowledge Graphs course exercises on UAP reports: spaCy named entity recognition, rule-based and context-based corrections, and WordNet word sense disambiguation on the 1986 Brazilian Official UFO Night and a 1952 Project Blue Book case.">
+  <meta name="author" content="blackWcode">
+  <meta name="keywords" content="NLP, spaCy, named entity recognition, word sense disambiguation, WordNet, Lesk, knowledge graph, UAP, Project Blue Book">
+  <meta name="theme-color" content="#060a14">
+  <link rel="canonical" href="https://blackwcode.github.io/uap-nlp-exercises/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="UAP NLP Exercises · How NLP Tools Read UAP Reports">
+  <meta property="og:description" content="What happens when standard NLP models read messy historical reports, Portuguese place names and ambiguous words? A hands-on learning project.">
+  <meta property="og:url" content="https://blackwcode.github.io/uap-nlp-exercises/">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <nav class="nav container" aria-label="Main">
+      <a class="brand" href="#top" aria-label="UAP NLP Exercises, back to top">
+        <img src="favicon.svg" alt="" width="28" height="28">
+        <span>UAP<span class="brand-plus">·</span>NLP</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="#project">Project</a></li>
+        <li><a href="#cases">Cases</a></li>
+        <li><a href="#ner">NER</a></li>
+        <li><a href="#wsd">Word senses</a></li>
+        <li><a href="#bluebook">Blue Book</a></li>
+        <li><a href="#findings">Findings</a></li>
+        <li><a class="nav-cta" href="https://github.com/blackWcode/uap-nlp-exercises">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <canvas id="bg-canvas" aria-hidden="true"></canvas>
+      <div class="hero-inner container">
+        <p class="badge badge-live"><span class="pulse" aria-hidden="true"></span>Work in progress · Knowledge graph learning project</p>
+        <p class="eyebrow">UAP NLP Exercises</p>
+        <h1 id="hero-title">What Do NLP Models See in a <span class="grad">UAP Report?</span></h1>
+        <p class="lede">Standard NLP tools meet messy historical reports, Portuguese place names and ambiguous words. A hands-on test of named entity recognition and word sense disambiguation, as a first step towards a knowledge graph.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#ner">See the experiments</a>
+          <a class="btn btn-ghost" href="https://github.com/blackWcode/uap-nlp-exercises/blob/main/Recreate_UAP_Exercises.ipynb">Open the notebook</a>
+        </div>
+        <dl class="hero-facts">
+          <div><dt>Cases</dt><dd>Brazil 1986 · USA 1952</dd></div>
+          <div><dt>spaCy models</dt><dd>sm · md · lg</dd></div>
+          <div><dt>Notebook</dt><dd>7 sections</dd></div>
+          <div><dt>Status</dt><dd>In progress</dd></div>
+        </dl>
+      </div>
+      <a class="scroll-cue" href="#project" aria-label="Scroll to the project"><span></span></a>
+    </section>
+
+    <!-- PROJECT -->
+    <section class="section" id="project" aria-labelledby="proj-title">
+      <div class="container split">
+        <div class="reveal">
+          <p class="kicker">01 · The project</p>
+          <h2 id="proj-title">Course exercises, real UAP texts</h2>
+          <p>This notebook recreates <strong>Exercises 1.2 and 1.3</strong> of the openHPI course <em>Knowledge Graphs – Foundations and Applications</em>, using texts from UAP (unidentified anomalous phenomena) reports instead of the course examples.</p>
+          <p>It tests how standard NLP tools handle these texts: <strong>messy historical reports</strong>, <strong>non-English place names</strong> and <strong>ambiguous words</strong>. Getting entities and word meanings right is an early step towards building a knowledge graph from UAP reports.</p>
+          <p class="note">A learning project. Results come from one sentence or paragraph per test, so they show behaviour on these examples, not general performance.</p>
+        </div>
+        <div class="terminal reveal" aria-label="Code and output from the notebook">
+          <div class="term-bar">
+            <span class="tdot r"></span><span class="tdot y"></span><span class="tdot g"></span>
+            <span class="term-title">section 2 · EntityRuler</span>
+            <span class="term-tag term-tag-real">From the notebook</span>
+          </div>
+          <pre class="term-body"><code id="term-code"></code><span class="caret" aria-hidden="true"></span></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- CASES -->
+    <section class="section alt" id="cases" aria-labelledby="cases-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="kicker">02 · The cases</p>
+          <h2 id="cases-title">Two radar and visual sightings</h2>
+          <p>One case from Brazil, one from the United States: different languages, decades and kinds of source.</p>
+        </div>
+        <div class="cases">
+          <article class="case reveal">
+            <p class="case-flag">Brazil · 19/05/1986</p>
+            <h3>“Official UFO Night” <span class="pt">(Noite Oficial dos OVNIs)</span></h3>
+            <p>Radar and visual sightings over several Brazilian states, reported by civilian and military witnesses.</p>
+            <dl class="case-meta">
+              <div><dt>Text analysed</dt><dd>gov.br article “Official UFO Night in Brazil” (2022), a secondary source written 36 years after the event</dd></div>
+              <div><dt>Primary source</dt><dd>Air Defence Command occurrence report, 02/06/1986, <a href="https://github.com/blackWcode/uap-nlp-exercises/tree/main/sources">in the repository</a> with a working translation</dd></div>
+              <div><dt>Used in</dt><dd>Sections 1–4</dd></div>
+            </dl>
+          </article>
+          <article class="case reveal">
+            <p class="case-flag">USA · 26–27/07/1952</p>
+            <h3>Washington, D.C. sightings <span class="pt">(Project Blue Book)</span></h3>
+            <p>Unidentified targets on air traffic control radar scopes over Washington, D.C., during the night.</p>
+            <dl class="case-meta">
+              <div><dt>Text analysed</dt><dd>One paragraph of a USAF incident report, transcribed by the Project 1947 website</dd></div>
+              <div><dt>Originals</dt><dd>Held by the US National Archives</dd></div>
+              <div><dt>Used in</dt><dd>Section 7</dd></div>
+            </dl>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- NER EXPLORER -->
+    <section class="section" id="ner" aria-labelledby="ner-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="kicker">03 · Named entity recognition</p>
+          <h2 id="ner-title">Can the model find four Brazilian states?</h2>
+          <p>The same sentence from the gov.br article, run through each step of the notebook. Choose a step to see what the model labelled. These are the actual outputs.</p>
+        </div>
+
+        <div class="ner-card reveal">
+          <div class="ner-tabs" role="tablist" aria-label="NER steps">
+            <button role="tab" class="ner-tab is-active" aria-selected="true" data-step="sm">Small model</button>
+            <button role="tab" class="ner-tab" aria-selected="false" data-step="ruler">+ EntityRuler</button>
+            <button role="tab" class="ner-tab" aria-selected="false" data-step="md">Medium model</button>
+            <button role="tab" class="ner-tab" aria-selected="false" data-step="ctx">Medium + context rule</button>
+          </div>
+          <p class="ner-sentence" id="ner-sentence" aria-live="polite"></p>
+          <div class="ner-foot">
+            <p class="ner-score" id="ner-score"></p>
+            <p class="ner-note" id="ner-note"></p>
+          </div>
+          <ul class="ner-legend" role="list">
+            <li><i class="lg-gpe"></i>GPE: places</li>
+            <li><i class="lg-person"></i>PERSON</li>
+            <li><i class="lg-org"></i>ORG</li>
+            <li><i class="lg-num"></i>DATE · CARDINAL · QUANTITY</li>
+            <li><i class="lg-miss"></i>Missed</li>
+          </ul>
+        </div>
+
+        <div class="mini-grid">
+          <div class="mini reveal">
+            <h3>Gazetteer (GeoText)</h3>
+            <p>Found São Paulo, Rio de Janeiro and Goiás, but labelled them as <em>cities</em>, because cities with those names exist. It missed Minas Gerais. A list of names cannot use context to decide what kind of place something is.</p>
+          </div>
+          <div class="mini reveal">
+            <h3>Generalisation test</h3>
+            <p>On five “Washington” sentences the medium model was already correct, so the context rule changed nothing. It did not turn people into places, but it has not yet been shown to fix errors in new sentences.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WSD -->
+    <section class="section alt" id="wsd" aria-labelledby="wsd-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="kicker">04 · Word sense disambiguation</p>
+          <h2 id="wsd-title">A “light” in the sky, or a torch?</h2>
+          <p>The Lesk algorithm picks a WordNet meaning by counting words a definition shares with the sentence. Here is what it chose.</p>
+        </div>
+        <div class="wsd-grid">
+          <article class="wsd reveal">
+            <p class="wsd-sentence">“The pilot observed a bright <mark>light</mark> moving across the sky.”</p>
+            <dl>
+              <div><dt>Lesk chose</dt><dd><code>luminosity.n.01</code> “the quality of being luminous”</dd></div>
+            </dl>
+            <span class="verdict bad">Wrong</span>
+            <p class="wsd-why">A quality cannot move across the sky.</p>
+          </article>
+          <article class="wsd reveal">
+            <p class="wsd-sentence">“The investigator used a <mark>light</mark> to examine the aircraft.”</p>
+            <dl>
+              <div><dt>Lesk chose</dt><dd><code>inner_light.n.01</code> “a divine presence believed by Quakers…”</dd></div>
+            </dl>
+            <span class="verdict bad">Wrong</span>
+            <p class="wsd-why">The investigator is using a device that gives light.</p>
+          </article>
+          <article class="wsd reveal">
+            <p class="wsd-sentence">“The radar <mark>tracked</mark> an unidentified object.”</p>
+            <dl>
+              <div><dt>NLTK Lesk</dt><dd><code>track.v.01</code> “carry on the feet and deposit”</dd></div>
+              <div><dt>Improved Lesk</dt><dd>Cannot decide</dd></div>
+            </dl>
+            <span class="verdict bad">Wrong</span>
+            <p class="wsd-why">Expected <code>track.v.02</code>: observe or plot the moving path of something.</p>
+          </article>
+          <article class="wsd reveal">
+            <p class="wsd-sentence">“The investigator <mark>tracked</mark> the development of the case.”</p>
+            <dl>
+              <div><dt>NLTK Lesk</dt><dd><code>track.v.02</code> “observe or plot the moving path…”</dd></div>
+              <div><dt>Improved Lesk</dt><dd>Cannot decide</dd></div>
+            </dl>
+            <span class="verdict meh">Right, probably by chance</span>
+            <p class="wsd-why">No definition shared enough words with the sentence to decide.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLUE BOOK -->
+    <section class="section" id="bluebook" aria-labelledby="bb-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="kicker">05 · Historical source</p>
+          <h2 id="bb-title">Project Blue Book, 1952: three models, eight entities</h2>
+          <p>The expected labels were written down <em>before</em> running the models. Each model then scored 4 out of 8, with different mistakes.</p>
+        </div>
+        <div class="table-wrap reveal" tabindex="0" role="region" aria-label="Blue Book NER results table">
+          <table class="bb">
+            <thead>
+              <tr><th scope="col">Entity</th><th scope="col">Expected</th><th scope="col">sm</th><th scope="col">md</th><th scope="col">lg</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Washington National Tower</th><td>FAC</td><td class="x">ORG</td><td class="ok">FAC</td><td class="x">ORG</td></tr>
+              <tr><th scope="row">Andrews Approach Control</th><td>FAC</td><td class="x">missed</td><td class="x">ORG</td><td class="x">ORG</td></tr>
+              <tr><th scope="row">Mr Bill Schreve</th><td>PERSON</td><td class="ok">PERSON</td><td class="ok">PERSON</td><td class="ok">PERSON</td></tr>
+              <tr><th scope="row">Maj Fournet</th><td>PERSON</td><td class="x">missed</td><td class="ok">PERSON</td><td class="x">missed</td></tr>
+              <tr><th scope="row">Newcastle</th><td>GPE</td><td class="ok">GPE</td><td class="ok">GPE</td><td class="ok">GPE</td></tr>
+              <tr><th scope="row">CAA</th><td>ORG</td><td class="ok">ORG</td><td class="x">missed</td><td class="ok">ORG</td></tr>
+              <tr><th scope="row">2150 EDT</th><td>TIME</td><td class="ok">TIME</td><td class="x">CARDINAL</td><td class="ok">TIME</td></tr>
+              <tr><th scope="row">2200′ (altitude)</th><td>QUANTITY</td><td class="x">DATE</td><td class="x">missed</td><td class="x">CARDINAL</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><th scope="row">Score</th><td></td><td>4 / 8</td><td>4 / 8</td><td>4 / 8</td></tr>
+            </tfoot>
+          </table>
+        </div>
+        <p class="small reveal">✓ green = matches the expected label · ✗ red = wrong or missed. Expected labels were decided by one person.</p>
+      </div>
+    </section>
+
+    <!-- FINDINGS -->
+    <section class="section alt" id="findings" aria-labelledby="find-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="kicker">06 · Findings so far</p>
+          <h2 id="find-title">What the notebook shows</h2>
+        </div>
+        <ol class="findings" role="list">
+          <li class="reveal"><span class="fnum">01</span><p>The spaCy models struggled with Brazilian state names: each labelled only one of the four correctly, likely because they were trained on English web and news text.</p></li>
+          <li class="reveal"><span class="fnum">02</span><p>A rule-based list fixed all four states, but it only works for the exact names on the list.</p></li>
+          <li class="reveal"><span class="fnum">03</span><p>A context rule (names after <em>in</em> or <em>over</em>, or listed after <em>states</em>) corrected every wrong label without a country-specific list.</p></li>
+          <li class="reveal"><span class="fnum">04</span><p>The Lesk algorithm chose the wrong sense of <em>light</em> twice and of <em>tracked</em> in the radar sentence.</p></li>
+          <li class="reveal"><span class="fnum">05</span><p>On the Blue Book paragraph, a larger model did not perform better; all three scored 4 out of 8. They did better here than on the Brazilian text, which suggests they find English names more easily than Portuguese ones.</p></li>
+        </ol>
+
+        <div class="limits reveal">
+          <h3>Limitations</h3>
+          <ul>
+            <li>Only one paragraph from the Blue Book file was analysed, so results may not hold for other reports.</li>
+            <li>The Blue Book text is a transcription, not the original scanned document.</li>
+            <li>The transformer model (<code>en_core_web_trf</code>) could not be loaded because of a Python 3.14 / PyTorch compatibility problem.</li>
+            <li>The expected labels were decided by one person; an independent second labeller would make them more reliable.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- STACK + SOURCES -->
+    <section class="section" id="sources" aria-labelledby="src-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="kicker">07 · Tools &amp; sources</p>
+          <h2 id="src-title">How it was built</h2>
+        </div>
+        <ul class="stack reveal" role="list">
+          <li><span class="chip-ico">Py</span>Python 3.14</li>
+          <li><span class="chip-ico">sp</span>spaCy</li>
+          <li><span class="chip-ico">nl</span>NLTK + WordNet</li>
+          <li><span class="chip-ico">pd</span>pandas</li>
+          <li><span class="chip-ico">geo</span>GeoText</li>
+          <li><span class="chip-ico">dx</span>displaCy</li>
+          <li><span class="chip-ico">ipy</span>Jupyter Notebook</li>
+          <li><span class="chip-ico">gh</span>GitHub</li>
+        </ul>
+
+        <div class="sources reveal">
+          <h3>Sources</h3>
+          <ul>
+            <li><strong>Course:</strong> Sack, H., Bruns, S., Tan, M. A., Tietz, T. and Vafaie, M. <em>Knowledge Graphs – Foundations and Applications</em>. openHPI (FIZ Karlsruhe &amp; KIT). <a href="https://open.hpi.de/courses/knowledgegraphs2023">open.hpi.de</a>. Course material CC BY-NC 3.0.</li>
+            <li><strong>Brazil, secondary:</strong> Government of Brazil (2022). “Official UFO Night in Brazil”. <a href="https://www.gov.br/en/government-of-brazil/latest-news/2022/official-ufo-night-in-brazil">gov.br</a>.</li>
+            <li><strong>Brazil, secondary:</strong> Lyra, R. (2017). “Arquivos Abertos – OVNIs nos céus do Brasil”. <em>Revista Imprensa Nacional</em>, Year 1, No. 3, pp. 33–34 (in Portuguese).</li>
+            <li><strong>Brazil, primary:</strong> Comando Aéreo de Defesa Aérea (1986). <em>Relatório de Ocorrência</em>, Official Letter No. 008/CMDO/C-138. Archive file BR_DFANBSB_ARX_0_0_0249. <a href="https://github.com/blackWcode/uap-nlp-exercises/tree/main/sources">In the repository</a>.</li>
+            <li><strong>USA:</strong> Project 1947. “Washington D.C. UFO Overflights, July 26/27, 1952”. <a href="https://www.project1947.com/fig/1952c.htm">project1947.com</a>. Transcription of a USAF Project Blue Book document.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta-section" id="github" aria-labelledby="gh-title">
+      <div class="container narrow center reveal">
+        <h2 id="gh-title">Explore the code</h2>
+        <p>The full notebook, with every step and output, is on GitHub. More will be added as the knowledge graph takes shape.</p>
+        <div class="hero-actions center-actions">
+          <a class="btn btn-primary btn-lg" href="https://github.com/blackWcode/uap-nlp-exercises">
+            <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            View Project on GitHub
+          </a>
+          <a class="btn btn-ghost btn-lg" href="https://blackwcode.github.io/open-set-recognition-xai/">Next: Open-Set Recognition + XAI</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>© <span id="year">2026</span> <a href="https://github.com/blackWcode">blackWcode</a> · UAP NLP Exercises</p>
+      <p class="small">A learning project. All results shown come from the published notebook.</p>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

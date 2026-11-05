@@ -2,6 +2,8 @@
 
 > **Work in progress.** This is part of a small learning project on knowledge graphs. The README will be updated when the experiment is finished.
 
+**Website:** https://blackwcode.github.io/uap-nlp-exercises/
+
 ## About
 
 This notebook recreates **Exercises 1.2 and 1.3** of the openHPI course *Knowledge Graphs – Foundations and Applications*. It uses texts from UAP (unidentified anomalous phenomena) reports instead of the course examples.
@@ -22,6 +24,7 @@ Two cases are used:
 | `Recreate_UAP_Exercises.ipynb` | Main notebook: NLP pipeline, NER corrections, model comparison and word sense disambiguation |
 | `sources/BR_DFANBSB_ARX_0_0_0249_d0001de0001_ocr.pdf` | Primary source: original Brazilian Air Force occurrence report (1986), in Portuguese, scanned with OCR |
 | `sources/Brazilian_Air_Force_1986_Portuguese_English_Translation.pdf` | Bilingual Portuguese–English working translation of the report (machine translation; see Sources) |
+| `index.html`, `style.css`, `script.js`, `favicon.svg`, `.nojekyll` | Project website (static, served by GitHub Pages) |
 
 ## What the notebook does
 
@@ -40,7 +43,7 @@ Summarised from the results sections of the notebook:
 
 - The spaCy models struggled with Brazilian state names. Each model labelled only one of the four states correctly, and some were labelled as PERSON or ORG. A likely reason is that the models were trained on English web and news text.
 - The rule-based list fixed all four states, but it only works for the names on the list.
-- GeoText labelled the states as cities because cities with the same names exist. A gazetteer can find known place names, but it cannot use context to decide what kind of place they are.
+- GeoText labelled the states as cities, because cities with the same names exist. A gazetteer can find known place names, but it cannot use context to decide what kind of place they are.
 - The context-based rule corrected all the wrong labels without a country-specific list. On the Washington sentences it changed nothing, which shows it did not turn people's names into places. It has not yet been shown to fix errors in new sentences.
 - The NLTK Lesk algorithm chose the wrong sense of *light* in both test sentences. It also chose the wrong sense of *tracked* in the radar sentence.
 - On the Blue Book paragraph, all three models scored 4 out of 8, with different mistakes. The larger model did not perform better. The models did better on this English text than on the Brazilian place names.
