@@ -40,7 +40,7 @@ Summarised from the results sections of the notebook:
 
 - The spaCy models struggled with Brazilian state names. Each model labelled only one of the four states correctly, and some were labelled as PERSON or ORG. A likely reason is that the models were trained on English web and news text.
 - The rule-based list fixed all four states, but it only works for the names on the list.
-- GeoText labelled the states as cities, because cities with the same names exist. A gazetteer can find known place names, but it cannot use context to decide what kind of place they are.
+- GeoText labelled the states as cities because cities with the same names exist. A gazetteer can find known place names, but it cannot use context to decide what kind of place they are.
 - The context-based rule corrected all the wrong labels without a country-specific list. On the Washington sentences it changed nothing, which shows it did not turn people's names into places. It has not yet been shown to fix errors in new sentences.
 - The NLTK Lesk algorithm chose the wrong sense of *light* in both test sentences. It also chose the wrong sense of *tracked* in the radar sentence.
 - On the Blue Book paragraph, all three models scored 4 out of 8, with different mistakes. The larger model did not perform better. The models did better on this English text than on the Brazilian place names.
